@@ -1,0 +1,21 @@
+{
+  "name": "@agent-dispatch/website",
+  "version": "0.1.0",
+  "description": "Static marketing website for AgentDispatch.",
+  "private": true,
+  "type": "module",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node scripts/validate.mjs",
+    "dev": "python3 -m http.server 4173 --directory src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agent-dispatch/website.git"
+  },
+  "bugs": {
+    "url": "https://github.com/agent-dispatch/website/issues"
+  },
+  "homepage": "https://agent-dispatch.github.io/website"
+}

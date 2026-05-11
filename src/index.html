@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AgentDispatch — spawn cloud agents instantly</title>
+    <meta name="description" content="AgentDispatch is a provider-neutral MCP control plane for spawning long-running cloud subagents from local lead agents.">
+    <meta name="theme-color" content="#080d1a">
+    <meta property="og:title" content="AgentDispatch">
+    <meta property="og:description" content="Spawn cloud subagents from any MCP-capable lead agent. AWS AgentCore first, cloud-neutral by design.">
+    <meta property="og:type" content="website">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#hero" aria-label="AgentDispatch home">
+        <span class="brand-mark" aria-hidden="true">AD</span>
+        <span>AgentDispatch</span>
+      </a>
+      <nav class="site-nav" aria-label="Primary navigation">
+        <a href="#how-it-works">How it works</a>
+        <a href="#packages">Packages</a>
+        <a href="#agentcore">AgentCore</a>
+        <a href="#quickstart">Quickstart</a>
+        <a href="https://github.com/agent-dispatch">GitHub</a>
+      </nav>
+    </header>
+
+    <main>
+      <section id="hero" class="hero section">
+        <div class="hero-copy">
+          <p class="eyebrow">MCP control plane for cloud subagents</p>
+          <h1>Spawn a cloud agent without trapping your lead agent in a long-running task.</h1>
+          <p class="hero-text">
+            AgentDispatch gives OpenClaw, Hermes, Claude Code, Codex, and custom orchestrators one provider-neutral tool:
+            hand off the task, keep durable status, and continue through A2A or another runtime protocol when the cloud supports it.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#quickstart">Start with AWS AgentCore</a>
+            <a class="button secondary" href="https://github.com/agent-dispatch/mcp-server">View MCP server</a>
+          </div>
+          <dl class="proof-points">
+            <div>
+              <dt>1 tool</dt>
+              <dd><code>spawn_cloud_agent</code></dd>
+            </div>
+            <div>
+              <dt>V1 runtime</dt>
+              <dd>AWS AgentCore</dd>
+            </div>
+            <div>
+              <dt>Future path</dt>
+              <dd>GCP, Azure, Kubernetes, local</dd>
+            </div>
+          </dl>
+        </div>
+        <aside class="terminal-card" aria-label="spawn_cloud_agent example">
+          <div class="terminal-top">
+            <span></span><span></span><span></span>
+          </div>
+          <pre><code>spawn_cloud_agent({
+  runtime: "research-agent",
+  instruction: "Audit this repo in the background.",
+  protocol: "a2a",
+  context: {
+    repo: "agent-dispatch",
+    priority: "background"
+  }
+})
+
+→ {
+  task_id: "task_...",
+  status: "running",
+  cloud_agent: {
+    protocol: "a2a",
+    invocation: { runtimeUrl: "https://..." },
+    a2a: { messageMethod: "message/send" }
+  }
+}</code></pre>
+        </aside>
+      </section>
+
+      <section id="how-it-works" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Architecture</p>
+          <h2>Control plane stays stable. Runtime adapters do the cloud-specific work.</h2>
+        </div>
+        <div class="flow-grid">
+          <article class="flow-step">
+            <span>01</span>
+            <h3>Lead agent calls MCP</h3>
+            <p>The local agent calls <code>spawn_cloud_agent</code> or the lower-level <code>dispatch_task</code> tool.</p>
+          </article>
+          <article class="flow-step">
+            <span>02</span>
+            <h3>Core routes the request</h3>
+            <p>AgentDispatch resolves provider, account profile, capability, task type, target mode, and runtime protocol.</p>
+          </article>
+          <article class="flow-step">
+            <span>03</span>
+            <h3>Adapter starts the runtime</h3>
+            <p>AWS AgentCore V1 invokes an existing runtime session or provisions a per-task runtime from an ECR image.</p>
+          </article>
+          <article class="flow-step">
+            <span>04</span>
+            <h3>Agent keeps interacting</h3>
+            <p>The response returns durable polling tools plus A2A, MCP, AG-UI, or HTTP metadata when available.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section split">
+        <div>
+          <p class="eyebrow">Why it matters</p>
+          <h2>Local agents should orchestrate. Cloud agents should execute.</h2>
+        </div>
+        <div class="feature-list">
+          <p><strong>Long-running work:</strong> deep research, audits, migrations, batch analysis, and build pipelines do not block the local session.</p>
+          <p><strong>Credential boundaries:</strong> cloud credentials stay in account profiles and provider SDK chains, never inside MCP tool payloads.</p>
+          <p><strong>Provider expansion:</strong> new providers are adapter packages, not new MCP tools that every lead agent must learn.</p>
+        </div>
+      </section>
+
+      <section id="packages" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Package map</p>
+          <h2>Separate repos, one contract.</h2>
+        </div>
+        <div class="package-grid">
+          <a href="https://github.com/agent-dispatch/core"><strong>@agent-dispatch/core</strong><span>Runtime models, routing, adapter contract.</span></a>
+          <a href="https://github.com/agent-dispatch/mcp-server"><strong>@agent-dispatch/mcp-server</strong><span>MCP tools for spawn, status, logs, results, cancel.</span></a>
+          <a href="https://github.com/agent-dispatch/adapter-aws-agentcore"><strong>@agent-dispatch/adapter-aws-agentcore</strong><span>AWS AgentCore runtime adapter.</span></a>
+          <a href="https://github.com/agent-dispatch/worker-agentcore"><strong>@agent-dispatch/worker-agentcore</strong><span>Reference AgentCore worker with A2A endpoint.</span></a>
+          <a href="https://github.com/agent-dispatch/sdk-js"><strong>@agent-dispatch/sdk</strong><span>Typed client for apps and frameworks.</span></a>
+          <a href="https://github.com/agent-dispatch/cli"><strong>@agent-dispatch/cli</strong><span>Config bootstrap and diagnostics.</span></a>
+          <a href="https://github.com/agent-dispatch/store-sqlite"><strong>@agent-dispatch/store-sqlite</strong><span>Local durable task and event store.</span></a>
+          <a href="https://github.com/agent-dispatch/adapter-template"><strong>@agent-dispatch/adapter-template</strong><span>Starting point for future clouds.</span></a>
+        </div>
+      </section>
+
+      <section id="agentcore" class="section dark-card">
+        <div>
+          <p class="eyebrow">V1 implementation</p>
+          <h2>AWS AgentCore runtime first.</h2>
+          <p>
+            The first adapter supports <code>agent.run</code> and <code>command.run</code>, session mode for existing runtime ARNs,
+            runtime mode for ECR-backed per-task runtimes, event normalization, cancellation, cleanup, and A2A handoff metadata.
+          </p>
+        </div>
+        <ul class="check-list">
+          <li>Runtime protocol hints for A2A, MCP, AG-UI, and HTTP.</li>
+          <li>Named account profiles using standard AWS credential chains.</li>
+          <li>SQLite task state, logs, provider refs, and artifact records.</li>
+          <li>Structured clarifications when a cloud spawn needs missing inputs.</li>
+        </ul>
+      </section>
+
+      <section id="quickstart" class="section quickstart">
+        <div class="section-heading">
+          <p class="eyebrow">Quickstart</p>
+          <h2>Configure once. Spawn when needed.</h2>
+        </div>
+        <div class="code-grid">
+          <pre><code>npm install -g @agent-dispatch/cli
+
+agentdispatch init \
+  --region us-west-2 \
+  --runtime-arn arn:aws:bedrock-agentcore:... \
+  --protocol a2a
+
+agentdispatch doctor</code></pre>
+          <pre><code>{
+  "mcpServers": {
+    "agentdispatch": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@agent-dispatch/mcp-server",
+        "--config",
+        "/absolute/path/agentdispatch.config.json"
+      ]
+    }
+  }
+}</code></pre>
+        </div>
+      </section>
+
+      <section id="roadmap" class="section roadmap">
+        <div class="section-heading">
+          <p class="eyebrow">Roadmap</p>
+          <h2>Cloud-neutral from day one.</h2>
+        </div>
+        <div class="roadmap-grid">
+          <div><strong>AWS</strong><span>AgentCore, ECS, App Runner, Lambda, Batch.</span></div>
+          <div><strong>GCP</strong><span>Cloud Run services and jobs, Vertex AI Agent Engine.</span></div>
+          <div><strong>Azure</strong><span>Container Apps, App Service, AI Foundry runtimes.</span></div>
+          <div><strong>Kubernetes</strong><span>Deployments, Jobs, CronJobs, service exposure.</span></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>AgentDispatch</span>
+      <a href="https://github.com/agent-dispatch">GitHub</a>
+      <a href="https://www.npmjs.com/org/agent-dispatch">npm</a>
+      <a href="https://github.com/agent-dispatch/docs">Docs</a>
+    </footer>
+
+    <script src="./main.js" type="module"></script>
+  </body>
+</html>
