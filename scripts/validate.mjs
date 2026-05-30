@@ -22,6 +22,26 @@ for (const section of requiredSections) {
   }
 }
 
+const requiredMeta = [
+  'property="og:title"',
+  'property="og:description"',
+  'property="og:image"',
+  'property="og:image:width" content="1280"',
+  'property="og:image:height" content="640"',
+  'name="twitter:card" content="summary_large_image"',
+  'name="twitter:image"'
+];
+for (const meta of requiredMeta) {
+  if (!index.includes(meta)) {
+    throw new Error(`Missing required social metadata: ${meta}`);
+  }
+}
+
+const socialPreviewPath = resolve(srcDir, "assets", "repo-social-preview.png");
+if (!existsSync(socialPreviewPath)) {
+  throw new Error("Missing required social preview image: src/assets/repo-social-preview.png");
+}
+
 for (const placeholder of ["TODO", "lorem", "ipsum", "undefined"]) {
   if (index.toLowerCase().includes(placeholder.toLowerCase())) {
     throw new Error(`Found placeholder text: ${placeholder}`);

@@ -3,12 +3,19 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AgentDispatch — spawn cloud agents instantly</title>
-    <meta name="description" content="AgentDispatch is a provider-neutral MCP control plane for spawning long-running cloud subagents from local lead agents.">
+    <title>AgentDispatch — spawn durable cloud subagents from MCP</title>
+    <meta name="description" content="AgentDispatch gives MCP-capable lead agents one provider-neutral tool for spawning durable cloud subagents with task polling and A2A, MCP, AG-UI, or HTTP follow-up metadata.">
     <meta name="theme-color" content="#080d1a">
     <meta property="og:title" content="AgentDispatch">
-    <meta property="og:description" content="Spawn cloud subagents from any MCP-capable lead agent. AWS AgentCore first, cloud-neutral by design.">
+    <meta property="og:description" content="One MCP tool for long-running cloud-agent work. AWS AgentCore first, provider-neutral by design.">
     <meta property="og:type" content="website">
+    <meta property="og:image" content="https://agent-dispatch.github.io/website/assets/repo-social-preview.png">
+    <meta property="og:image:width" content="1280">
+    <meta property="og:image:height" content="640">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AgentDispatch">
+    <meta name="twitter:description" content="One MCP tool for long-running cloud-agent work. AWS AgentCore first, provider-neutral by design.">
+    <meta name="twitter:image" content="https://agent-dispatch.github.io/website/assets/repo-social-preview.png">
     <link rel="stylesheet" href="./styles.css">
   </head>
   <body>
@@ -29,15 +36,15 @@
     <main>
       <section id="hero" class="hero section">
         <div class="hero-copy">
-          <p class="eyebrow">MCP control plane for cloud subagents</p>
-          <h1>Spawn a cloud agent without trapping your lead agent in a long-running task.</h1>
+          <p class="eyebrow">One MCP tool. Durable cloud-agent work.</p>
+          <h1>Your local agent should orchestrate. Cloud agents should execute.</h1>
           <p class="hero-text">
-            AgentDispatch gives OpenClaw, Hermes, Claude Code, Codex, and custom orchestrators one provider-neutral tool:
-            hand off the task, keep durable status, and continue through A2A or another runtime protocol when the cloud supports it.
+            AgentDispatch gives OpenClaw, Hermes, Claude Code, Codex, and custom orchestrators a provider-neutral control plane:
+            spawn the subagent, keep a durable task handle, and continue through A2A or another runtime protocol when the cloud supports it.
           </p>
           <div class="hero-actions">
             <a class="button primary" href="#quickstart">Start with AWS AgentCore</a>
-            <a class="button secondary" href="https://github.com/agent-dispatch/mcp-server">View MCP server</a>
+            <a class="button secondary" href="https://github.com/agent-dispatch">Star on GitHub</a>
           </div>
           <dl class="proof-points">
             <div>
@@ -60,7 +67,7 @@
           </div>
           <pre><code>spawn_cloud_agent({
   runtime: "research-agent",
-  instruction: "Audit this repo in the background.",
+  instruction: "Audit this repo while I keep working.",
   protocol: "a2a",
   context: {
     repo: "agent-dispatch",
@@ -70,7 +77,7 @@
 
 → {
   task_id: "task_...",
-  status: "running",
+  status: "queued",
   cloud_agent: {
     protocol: "a2a",
     invocation: { runtimeUrl: "https://..." },
@@ -83,7 +90,7 @@
       <section id="how-it-works" class="section">
         <div class="section-heading">
           <p class="eyebrow">Architecture</p>
-          <h2>Control plane stays stable. Runtime adapters do the cloud-specific work.</h2>
+          <h2>The tool contract stays stable. Provider adapters do the cloud-specific work.</h2>
         </div>
         <div class="flow-grid">
           <article class="flow-step">
@@ -104,7 +111,7 @@
           <article class="flow-step">
             <span>04</span>
             <h3>Agent keeps interacting</h3>
-            <p>The response returns durable polling tools plus A2A, MCP, AG-UI, or HTTP metadata when available.</p>
+            <p>The response returns durable polling tools plus A2A, MCP, AG-UI, or HTTP handoff metadata when available.</p>
           </article>
         </div>
       </section>
@@ -112,12 +119,12 @@
       <section class="section split">
         <div>
           <p class="eyebrow">Why it matters</p>
-          <h2>Local agents should orchestrate. Cloud agents should execute.</h2>
+          <h2>Make long-running work feel like a normal agent tool call.</h2>
         </div>
         <div class="feature-list">
-          <p><strong>Long-running work:</strong> deep research, audits, migrations, batch analysis, and build pipelines do not block the local session.</p>
+          <p><strong>Long-running work:</strong> deep research, audits, migrations, batch analysis, and build pipelines leave the local session.</p>
           <p><strong>Credential boundaries:</strong> cloud credentials stay in account profiles and provider SDK chains, never inside MCP tool payloads.</p>
-          <p><strong>Provider expansion:</strong> new providers are adapter packages, not new MCP tools that every lead agent must learn.</p>
+          <p><strong>Provider expansion:</strong> new providers are adapter packages, not new MCP tools every lead agent has to learn.</p>
         </div>
       </section>
 
@@ -158,7 +165,7 @@
       <section id="quickstart" class="section quickstart">
         <div class="section-heading">
           <p class="eyebrow">Quickstart</p>
-          <h2>Configure once. Spawn when needed.</h2>
+          <h2>Configure once. Spawn when the task should leave your laptop.</h2>
         </div>
         <div class="code-grid">
           <pre><code>npm install -g @agent-dispatch/cli
