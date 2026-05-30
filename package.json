@@ -5,6 +5,16 @@
   "private": true,
   "type": "module",
   "license": "Apache-2.0",
+  "keywords": [
+    "agentdispatch",
+    "website",
+    "mcp",
+    "model-context-protocol",
+    "cloud-agents",
+    "subagents",
+    "aws-agentcore",
+    "agent-orchestration"
+  ],
   "scripts": {
     "build": "node scripts/build.mjs",
     "test": "node scripts/validate.mjs",
