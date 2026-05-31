@@ -18,7 +18,6 @@ npm run build
 - `src/styles.css` — responsive visual system.
 - `src/assets/repo-social-preview.png` — Open Graph and Twitter preview image.
 - `src/assets/org-logo.svg` — brand mark used in the page header and hero.
-- `src/main.js` — progressive enhancements only.
 - `scripts/validate.mjs` — static checks for local links, copy placeholders, and required sections.
 - `scripts/build.mjs` — copies `src` into `dist` for GitHub Pages or any static host.
 
