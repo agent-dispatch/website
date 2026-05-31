@@ -27,5 +27,8 @@
   "bugs": {
     "url": "https://github.com/agent-dispatch/website/issues"
   },
-  "homepage": "https://agent-dispatch.github.io/website"
+  "homepage": "https://agent-dispatch.github.io/website",
+  "engines": {
+    "node": ">=20.19"
+  }
 }

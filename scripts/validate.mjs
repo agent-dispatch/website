@@ -7,12 +7,9 @@ const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const srcDir = resolve(repoRoot, "src");
 const indexPath = resolve(srcDir, "index.html");
 const requiredSections = [
-  "hero",
-  "how-it-works",
-  "packages",
-  "agentcore",
-  "quickstart",
-  "roadmap"
+  "top",
+  "why",
+  "install"
 ];
 
 const index = await readFile(indexPath, "utf8");
@@ -41,6 +38,17 @@ const socialPreviewPath = resolve(srcDir, "assets", "repo-social-preview.png");
 if (!existsSync(socialPreviewPath)) {
   throw new Error("Missing required social preview image: src/assets/repo-social-preview.png");
 }
+const socialPreviewDimensions = await readPngDimensions(socialPreviewPath);
+if (socialPreviewDimensions.width !== 1280 || socialPreviewDimensions.height !== 640) {
+  throw new Error(
+    `Social preview image must be 1280x640; got ${socialPreviewDimensions.width}x${socialPreviewDimensions.height}.`
+  );
+}
+
+const orgLogoPath = resolve(srcDir, "assets", "org-logo.svg");
+if (!existsSync(orgLogoPath)) {
+  throw new Error("Missing required organization logo: src/assets/org-logo.svg");
+}
 
 for (const placeholder of ["TODO", "lorem", "ipsum", "undefined"]) {
   if (index.toLowerCase().includes(placeholder.toLowerCase())) {
@@ -48,10 +56,23 @@ for (const placeholder of ["TODO", "lorem", "ipsum", "undefined"]) {
   }
 }
 
+for (const expected of [
+  "docs",
+  "live-aws-verification.md",
+  "spawn_cloud_agent",
+  "@agent-dispatch/mcp-server",
+  "Live AWS dispatch remains opt-in"
+]) {
+  if (!index.includes(expected)) {
+    throw new Error(`Missing required website copy: ${expected}`);
+  }
+}
+
 for (const match of index.matchAll(/(?:href|src)="([^"]+)"/g)) {
   const target = match[1];
   if (target.startsWith("http") || target.startsWith("#") || target.startsWith("mailto:")) continue;
-  const localPath = resolve(dirname(indexPath), target);
+  const localTarget = target.split(/[?#]/, 1)[0];
+  const localPath = resolve(dirname(indexPath), localTarget);
   if (!existsSync(localPath)) {
     throw new Error(`Broken local asset reference: ${target}`);
   }
@@ -60,6 +81,12 @@ for (const match of index.matchAll(/(?:href|src)="([^"]+)"/g)) {
 const css = await readFile(resolve(srcDir, "styles.css"), "utf8");
 if (!css.includes("@media") || !css.includes(":root")) {
   throw new Error("CSS must include responsive rules and root design tokens.");
+}
+if (/letter-spacing:\s*-[0-9.]/.test(css)) {
+  throw new Error("CSS must not use negative letter spacing.");
+}
+if (/font-size:\s*[^;]*vw/.test(css)) {
+  throw new Error("CSS must not scale font size directly with viewport width.");
 }
 
 const files = [];
@@ -74,3 +101,16 @@ async function walk(dir) {
 await walk(srcDir);
 
 console.log(`Validated AgentDispatch website (${files.length} source files).`);
+
+async function readPngDimensions(path) {
+  const bytes = await readFile(path);
+  const signature = bytes.subarray(0, 8).toString("hex");
+  if (signature !== "89504e470d0a1a0a") {
+    throw new Error(`${path} is not a PNG file`);
+  }
+
+  return {
+    width: bytes.readUInt32BE(16),
+    height: bytes.readUInt32BE(20)
+  };
+}
